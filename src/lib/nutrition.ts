@@ -42,7 +42,7 @@ export function weeklyBuckets(meals: Meal[]) {
     buckets.push({ day: labels[d.getDay()], cal: 0, date: d.toISOString().slice(0, 10) });
   }
   for (const m of meals) {
-    const key = m.consumed_at.slice(0, 10);
+    const key = m.created_at.slice(0, 10);
     const b = buckets.find((x) => x.date === key);
     if (b) b.cal += m.calories || 0;
   }
