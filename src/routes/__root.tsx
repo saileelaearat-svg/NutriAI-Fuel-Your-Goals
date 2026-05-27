@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "NutriAI — Your AI nutrition companion" },
       { name: "description", content: "Track meals, scan food with AI, and hit your nutrition goals." },
-      { property: "og:title", content: "NutriAI" },
+      { property: "og:title", content: "NutriAI — Your AI nutrition companion" },
       { property: "og:description", content: "Track meals, scan food with AI, and hit your nutrition goals." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "NutriAI — Your AI nutrition companion" },
+      { name: "twitter:description", content: "Track meals, scan food with AI, and hit your nutrition goals." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fa9d57d9-3772-4a08-8b2d-b83553ec7c19/id-preview-d937e97d--5fa95345-6bc5-486a-8df9-a90e1a3b05b6.lovable.app-1779899906318.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fa9d57d9-3772-4a08-8b2d-b83553ec7c19/id-preview-d937e97d--5fa95345-6bc5-486a-8df9-a90e1a3b05b6.lovable.app-1779899906318.png" },
     ],
     links: [
       {
