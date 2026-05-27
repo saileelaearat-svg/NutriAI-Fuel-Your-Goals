@@ -17,6 +17,7 @@ import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiAnalyzeFoodRouteImport } from './routes/api/analyze-food'
 
 const ScannerRoute = ScannerRouteImport.update({
   id: '/scanner',
@@ -58,6 +59,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAnalyzeFoodRoute = ApiAnalyzeFoodRouteImport.update({
+  id: '/api/analyze-food',
+  path: '/api/analyze-food',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
+  '/api/analyze-food': typeof ApiAnalyzeFoodRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
+  '/api/analyze-food': typeof ApiAnalyzeFoodRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
+  '/api/analyze-food': typeof ApiAnalyzeFoodRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/result'
     | '/scanner'
+    | '/api/analyze-food'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/result'
     | '/scanner'
+    | '/api/analyze-food'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/result'
     | '/scanner'
+    | '/api/analyze-food'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ResultRoute: typeof ResultRoute
   ScannerRoute: typeof ScannerRoute
+  ApiAnalyzeFoodRoute: typeof ApiAnalyzeFoodRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/analyze-food': {
+      id: '/api/analyze-food'
+      path: '/api/analyze-food'
+      fullPath: '/api/analyze-food'
+      preLoaderRoute: typeof ApiAnalyzeFoodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ResultRoute: ResultRoute,
   ScannerRoute: ScannerRoute,
+  ApiAnalyzeFoodRoute: ApiAnalyzeFoodRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
