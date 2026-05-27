@@ -67,10 +67,10 @@ function Home() {
   }, [user, todayMealsQ]);
 
   const profile = profileQ.data;
-  const goal = profile?.daily_calorie_goal ?? 2100;
-  const proteinGoal = profile?.protein_goal ?? 150;
-  const carbsGoal = profile?.carbs_goal ?? 220;
-  const fatGoal = profile?.fat_goal ?? 70;
+  const goal = profile?.daily_calories ?? 2100;
+  const proteinGoal = 150;
+  const carbsGoal = 220;
+  const fatGoal = 70;
   const t = totals(todayMealsQ.data ?? []);
   const remaining = Math.max(0, goal - t.calories);
   const pct = goal > 0 ? (t.calories / goal) * 100 : 0;
@@ -81,11 +81,11 @@ function Home() {
         <div>
           <p className="text-sm text-white/50">Welcome back</p>
           <h1 className="text-2xl font-bold">
-            {profile?.full_name?.split(" ")[0] ?? user?.email?.split("@")[0] ?? "Friend"} 👋
+            {profile?.name?.split(" ")[0] ?? user?.email?.split("@")[0] ?? "Friend"} 👋
           </h1>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] font-bold">
-          {(profile?.full_name ?? user?.email ?? "U")[0].toUpperCase()}
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] font-bold shadow-lg shadow-[#ff6b35]/30">
+          {(profile?.name ?? user?.email ?? "U")[0].toUpperCase()}
         </div>
       </header>
 

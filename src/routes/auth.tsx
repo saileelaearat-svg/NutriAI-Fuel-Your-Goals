@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -59,8 +60,8 @@ function AuthPage() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] text-2xl">
-          ✨
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] p-2 shadow-xl shadow-[#ff6b35]/40">
+          <img src={logo} alt="NutriAI logo" className="h-full w-full" />
         </div>
         <h1 className="text-3xl font-bold">
           {mode === "signin" ? "Welcome back" : "Create account"}

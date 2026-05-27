@@ -27,11 +27,10 @@ export type Meal = {
 
 export type Profile = {
   id: string;
-  full_name: string | null;
-  daily_calorie_goal: number;
-  protein_goal: number;
-  carbs_goal: number;
-  fat_goal: number;
-  weight_kg: number | null;
-  target_weight_kg: number | null;
+  name: string | null;
+  daily_calories: number;
+  current_weight: number | null;
+  target_weight: number | null;
+  created_at: string;
+  updated_at: string;
 };
