@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateText, Output } from "ai";
+import { generateObject } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
@@ -36,12 +36,12 @@ export const Route = createFileRoute("/api/analyze-food")({
         }
 
         const gateway = createLovableAiGatewayProvider(key);
-        const model = gateway("google/gemini-3-flash-preview");
+        const model = gateway("google/gemini-2.5-flash");
 
         try {
-          const { output } = await generateText({
+          const { object } = await generateObject({
             model,
-            output: Output.object({ schema: FoodSchema }),
+            schema: FoodSchema,
             messages: [
               {
                 role: "system",
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/api/analyze-food")({
               },
             ],
           });
-          return Response.json(output);
+          return Response.json(object);
         } catch (e: any) {
           const msg = e?.message ?? "AI request failed";
           const status = /429/.test(msg) ? 429 : /402/.test(msg) ? 402 : 500;
