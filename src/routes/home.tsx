@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Camera, Plus, Droplet } from "lucide-react";
 import { supabase, type Meal, type Profile } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -42,8 +43,8 @@ function Home() {
         .from("meals")
         .select("*")
         .eq("user_id", user!.id)
-        .gte("consumed_at", startOfToday().toISOString())
-        .order("consumed_at", { ascending: false });
+        .gte("created_at", startOfToday().toISOString())
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Meal[];
     },
@@ -147,27 +148,49 @@ function Macro({ label, value, goal, color }: { label: string; value: number; go
 }
 
 function WaterCard({ userId }: { userId?: string }) {
+  const qc = useQueryClient();
   const q = useQuery({
     queryKey: ["water", "today", userId],
     enabled: !!userId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("water_intake")
-        .select("glasses")
+        .select("amount")
         .eq("user_id", userId!)
-        .gte("logged_at", startOfToday().toISOString());
+        .gte("created_at", startOfToday().toISOString());
       if (error) throw error;
-      return (data ?? []).reduce((s, r) => s + (r.glasses ?? 0), 0);
+      return (data ?? []).reduce((s, r: { amount: number | null }) => s + (r.amount ?? 0), 0);
     },
   });
+
+  useEffect(() => {
+    if (!userId) return;
+    const ch = supabase
+      .channel("water-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "water_intake", filter: `user_id=eq.${userId}` },
+        () => qc.invalidateQueries({ queryKey: ["water", "today", userId] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [userId, qc]);
 
   const total = q.data ?? 0;
   const goal = 8;
 
   async function addGlass() {
     if (!userId) return;
-    await supabase.from("water_intake").insert({ user_id: userId, glasses: 1 });
-    q.refetch();
+    const { error } = await supabase
+      .from("water_intake")
+      .insert({ user_id: userId, amount: 1 });
+    if (error) {
+      toast.error(error.message ?? "Could not log water");
+      return;
+    }
+    qc.invalidateQueries({ queryKey: ["water", "today", userId] });
   }
 
   return (
