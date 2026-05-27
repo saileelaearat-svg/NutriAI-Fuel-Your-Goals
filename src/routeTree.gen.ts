@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ScannerRouteImport } from './routes/scanner'
+import { Route as ResultRouteImport } from './routes/result'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const ScannerRoute = ScannerRouteImport.update({
   id: '/scanner',
   path: '/scanner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultRoute = ResultRouteImport.update({
+  id: '/result',
+  path: '/result',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/home': typeof HomeRoute
+  '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/home': typeof HomeRoute
+  '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/home': typeof HomeRoute
+  '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/home' | '/scanner'
+  fullPaths: '/' | '/auth' | '/home' | '/result' | '/scanner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home' | '/scanner'
-  id: '__root__' | '/' | '/auth' | '/home' | '/scanner'
+  to: '/' | '/auth' | '/home' | '/result' | '/scanner'
+  id: '__root__' | '/' | '/auth' | '/home' | '/result' | '/scanner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   HomeRoute: typeof HomeRoute
+  ResultRoute: typeof ResultRoute
   ScannerRoute: typeof ScannerRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/scanner'
       fullPath: '/scanner'
       preLoaderRoute: typeof ScannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/result': {
+      id: '/result'
+      path: '/result'
+      fullPath: '/result'
+      preLoaderRoute: typeof ResultRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   HomeRoute: HomeRoute,
+  ResultRoute: ResultRoute,
   ScannerRoute: ScannerRoute,
 }
 export const routeTree = rootRouteImport
