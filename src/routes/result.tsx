@@ -48,7 +48,7 @@ function Result() {
     setSaving(true);
     const { error } = await supabase.from("meals").insert({
       user_id: user.id,
-      name: food.name,
+      food_name: food.name,
       meal_type: mealType,
       calories: Math.round(food.calories),
       protein: food.protein,
@@ -57,7 +57,7 @@ function Result() {
     });
     setSaving(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(error.message ?? "Could not save meal");
       return;
     }
     sessionStorage.removeItem("nutriai:lastScan");
