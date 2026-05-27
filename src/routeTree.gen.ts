@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ScannerRouteImport } from './routes/scanner'
 import { Route as ResultRouteImport } from './routes/result'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as DiaryRouteImport } from './routes/diary'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiaryRoute = DiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/diary': typeof DiaryRoute
   '/home': typeof HomeRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/diary': typeof DiaryRoute
   '/home': typeof HomeRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
@@ -59,21 +67,23 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/diary': typeof DiaryRoute
   '/home': typeof HomeRoute
   '/result': typeof ResultRoute
   '/scanner': typeof ScannerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/home' | '/result' | '/scanner'
+  fullPaths: '/' | '/auth' | '/diary' | '/home' | '/result' | '/scanner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/home' | '/result' | '/scanner'
-  id: '__root__' | '/' | '/auth' | '/home' | '/result' | '/scanner'
+  to: '/' | '/auth' | '/diary' | '/home' | '/result' | '/scanner'
+  id: '__root__' | '/' | '/auth' | '/diary' | '/home' | '/result' | '/scanner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  DiaryRoute: typeof DiaryRoute
   HomeRoute: typeof HomeRoute
   ResultRoute: typeof ResultRoute
   ScannerRoute: typeof ScannerRoute
@@ -102,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/diary': {
+      id: '/diary'
+      path: '/diary'
+      fullPath: '/diary'
+      preLoaderRoute: typeof DiaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -122,6 +139,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  DiaryRoute: DiaryRoute,
   HomeRoute: HomeRoute,
   ResultRoute: ResultRoute,
   ScannerRoute: ScannerRoute,
