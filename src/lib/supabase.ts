@@ -15,13 +15,14 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 export type Meal = {
   id: string;
   user_id: string;
-  name: string;
+  food_name: string;
   meal_type: "breakfast" | "lunch" | "dinner" | "snack";
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
-  consumed_at: string;
+  image_url: string | null;
+  created_at: string;
 };
 
 export type Profile = {

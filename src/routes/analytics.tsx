@@ -27,7 +27,7 @@ function Analytics() {
         .from("meals")
         .select("*")
         .eq("user_id", user!.id)
-        .gte("consumed_at", startOfDaysAgo(6).toISOString());
+        .gte("created_at", startOfDaysAgo(6).toISOString());
       if (error) throw error;
       return (data ?? []) as Meal[];
     },

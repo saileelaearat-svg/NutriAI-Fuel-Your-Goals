@@ -36,12 +36,27 @@ function Diary() {
         .from("meals")
         .select("*")
         .eq("user_id", user!.id)
-        .gte("consumed_at", startOfToday().toISOString())
-        .order("consumed_at", { ascending: true });
+        .gte("created_at", startOfToday().toISOString())
+        .order("created_at", { ascending: true });
       if (error) throw error;
       return (data ?? []) as Meal[];
     },
   });
+
+  useEffect(() => {
+    if (!user) return;
+    const ch = supabase
+      .channel("diary-meals")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "meals", filter: `user_id=eq.${user.id}` },
+        () => qc.invalidateQueries({ queryKey: ["meals"] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [user, qc]);
 
   const del = useMutation({
     mutationFn: async (id: string) => {
@@ -52,7 +67,7 @@ function Diary() {
       qc.invalidateQueries({ queryKey: ["meals"] });
       toast.success("Removed");
     },
-    onError: (e: any) => toast.error(e.message),
+    onError: (e: any) => toast.error(e.message ?? "Could not delete"),
   });
 
   const grouped = groupByMealType(mealsQ.data ?? []);
@@ -80,7 +95,7 @@ function Diary() {
               {items.map((m) => (
                 <li key={m.id} className="flex items-center justify-between py-3">
                   <div>
-                    <p className="text-sm font-semibold">{m.name}</p>
+                    <p className="text-sm font-semibold">{m.food_name}</p>
                     <p className="text-xs text-white/40">
                       {m.calories} kcal · P {Math.round(m.protein)} · C {Math.round(m.carbs)} · F {Math.round(m.fat)}
                     </p>
