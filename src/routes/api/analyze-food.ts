@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { generateObject } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 
@@ -8,12 +8,21 @@ const BodySchema = z.object({
 });
 
 const FoodSchema = z.object({
-  name: z.string().describe("Short descriptive name of the dish, e.g. 'Avocado Toast'"),
-  calories: z.number().describe("Estimated total kcal for the visible serving"),
-  protein: z.number().describe("Protein in grams"),
-  carbs: z.number().describe("Carbs in grams"),
-  fat: z.number().describe("Fat in grams"),
+  name: z.string(),
+  calories: z.number(),
+  protein: z.number(),
+  carbs: z.number(),
+  fat: z.number(),
 });
+
+function extractJson(text: string): unknown {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const candidate = (fenced ? fenced[1] : text).trim();
+  const start = candidate.indexOf("{");
+  const end = candidate.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("No JSON object in response");
+  return JSON.parse(candidate.slice(start, end + 1));
+}
 
 export const Route = createFileRoute("/api/analyze-food")({
   server: {
@@ -39,15 +48,11 @@ export const Route = createFileRoute("/api/analyze-food")({
         const model = gateway("google/gemini-2.5-flash");
 
         try {
-          const { object } = await generateObject({
+          const { text } = await generateText({
             model,
-            schema: FoodSchema,
+            system:
+              "You are a nutrition expert. Identify the food in the image and estimate macronutrients for a typical visible serving. Reply ONLY with a single JSON object matching this exact shape: {\"name\": string, \"calories\": number, \"protein\": number, \"carbs\": number, \"fat\": number}. No prose, no code fences.",
             messages: [
-              {
-                role: "system",
-                content:
-                  "You are a nutrition expert. Identify the food in the image and estimate macronutrients for a typical serving. Return concise values. If multiple items, give totals for what's visible.",
-              },
               {
                 role: "user",
                 content: [
@@ -57,7 +62,8 @@ export const Route = createFileRoute("/api/analyze-food")({
               },
             ],
           });
-          return Response.json(object);
+          const food = FoodSchema.parse(extractJson(text));
+          return Response.json(food);
         } catch (e: any) {
           const msg = e?.message ?? "AI request failed";
           const status = /429/.test(msg) ? 429 : /402/.test(msg) ? 402 : 500;
