@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid } from "recharts";
 import { supabase, type Meal } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/analytics")({
 function Analytics() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const qc = useQueryClient();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -25,13 +26,28 @@ function Analytics() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("meals")
-        .select("*")
+        .select("calories, created_at, user_id")
         .eq("user_id", user!.id)
         .gte("created_at", startOfDaysAgo(6).toISOString());
       if (error) throw error;
       return (data ?? []) as Meal[];
     },
   });
+
+  useEffect(() => {
+    if (!user) return;
+    const ch = supabase
+      .channel("analytics-meals")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "meals", filter: `user_id=eq.${user.id}` },
+        () => qc.invalidateQueries({ queryKey: ["meals", "week", user.id] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, [user, qc]);
 
   const data = weeklyBuckets(q.data ?? []);
   const avg = Math.round(data.reduce((s, d) => s + d.cal, 0) / 7);
