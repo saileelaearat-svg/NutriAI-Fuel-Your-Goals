@@ -60,9 +60,11 @@ function AuthPage() {
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] p-2 shadow-xl shadow-[#ff6b35]/40">
-          <img src={logo} alt="NutriAI logo" className="h-full w-full" />
-        </div>
+        <img
+          src={logo}
+          alt="NutriAI logo"
+          className="mx-auto mb-4 h-20 w-20 drop-shadow-[0_6px_20px_rgba(255,107,53,0.45)]"
+        />
         <h1 className="text-3xl font-bold">
           {mode === "signin" ? "Welcome back" : "Create account"}
         </h1>
