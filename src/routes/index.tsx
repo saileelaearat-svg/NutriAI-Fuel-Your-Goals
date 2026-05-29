@@ -22,8 +22,9 @@ function Splash() {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0a0a0f] via-[#13080a] to-[#1a0f08]">
       <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-[#ff6b35]/20 blur-3xl" />
-      <div className="relative mb-6 flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] p-3 shadow-2xl shadow-[#ff6b35]/40">
-        <img src={logo} alt="NutriAI logo" className="h-full w-full" />
+      <div className="relative mb-6 h-32 w-32 animate-pulse">
+        <div className="absolute inset-0 rounded-3xl bg-[#ff6b35]/30 blur-2xl" />
+        <img src={logo} alt="NutriAI logo" className="relative h-full w-full drop-shadow-[0_8px_24px_rgba(255,107,53,0.5)]" />
       </div>
       <h1 className="bg-gradient-to-r from-white to-white/70 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent">
         NutriAI
