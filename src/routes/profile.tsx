@@ -51,21 +51,31 @@ function ProfilePage() {
   }, [p]);
 
   async function save() {
-    if (!user) return;
+    // Always re-fetch the authenticated user — never trust stale state for writes.
+    const { data: auth, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !auth?.user) {
+      toast.error("You must be signed in to save your profile.");
+      navigate({ to: "/auth" });
+      return;
+    }
     const { error } = await supabase
       .from("profiles")
-      .upsert({
-        id: user.id,
-        name: name || null,
-        daily_calories: calGoal,
-        current_weight: weight ? Number(weight) : null,
-        target_weight: target ? Number(target) : null,
-        updated_at: new Date().toISOString(),
-      });
-    if (error) toast.error(error.message ?? "Could not save");
-    else {
+      .upsert(
+        {
+          id: auth.user.id,
+          name: name || null,
+          daily_calories: calGoal,
+          current_weight: weight ? Number(weight) : null,
+          target_weight: target ? Number(target) : null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "id" },
+      );
+    if (error) {
+      toast.error(error.message ?? "Could not save");
+    } else {
       toast.success("Saved");
-      qc.invalidateQueries({ queryKey: ["profile", user.id] });
+      qc.invalidateQueries({ queryKey: ["profile", auth.user.id] });
     }
   }
 
