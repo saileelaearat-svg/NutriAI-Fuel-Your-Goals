@@ -28,7 +28,7 @@ function ProfilePage() {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user!.id)
+        .eq("auth_user_id", user!.id)
         .maybeSingle();
       if (error) throw error;
       return data as ProfileT | null;
@@ -52,31 +52,35 @@ function ProfilePage() {
   }, [p]);
 
   async function save() {
-    // Always re-fetch the authenticated user — never trust stale state for writes.
-    const { data: auth, error: authErr } = await supabase.auth.getUser();
-    if (authErr || !auth?.user) {
-      toast.error("You must be signed in to save your profile.");
-      navigate({ to: "/auth" });
-      return;
-    }
-    const { error } = await supabase
-      .from("profiles")
-      .upsert(
-        {
-          id: auth.user.id,
-          name: name || null,
-          daily_calories: calGoal,
-          current_weight: weight ? Number(weight) : null,
-          target_weight: target ? Number(target) : null,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "id" },
-      );
-    if (error) {
-      toast.error(error.message ?? "Could not save");
-    } else {
-      toast.success("Saved");
-      qc.invalidateQueries({ queryKey: ["profile", auth.user.id] });
+    setSaving(true);
+    try {
+      const { data: auth, error: authErr } = await supabase.auth.getUser();
+      if (authErr || !auth?.user) {
+        toast.error("You must be signed in to save your profile.");
+        navigate({ to: "/auth" });
+        return;
+      }
+      const { error } = await supabase
+        .from("profiles")
+        .upsert(
+          {
+            auth_user_id: auth.user.id,
+            name: name || null,
+            daily_calories: calGoal,
+            current_weight: weight ? Number(weight) : null,
+            target_weight: target ? Number(target) : null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "auth_user_id" },
+        );
+      if (error) {
+        toast.error(error.message ?? "Could not save");
+      } else {
+        toast.success("Profile saved");
+        qc.invalidateQueries({ queryKey: ["profile", auth.user.id] });
+      }
+    } finally {
+      setSaving(false);
     }
   }
 
