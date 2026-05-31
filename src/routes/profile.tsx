@@ -44,7 +44,7 @@ function ProfilePage() {
 
   useEffect(() => {
     if (p) {
-      setName(p.name ?? "");
+      setName(p.full_name ?? p.name ?? "");
       setCalGoal(p.daily_calories ?? 2100);
       setWeight(p.current_weight != null ? String(p.current_weight) : "");
       setTarget(p.target_weight != null ? String(p.target_weight) : "");
