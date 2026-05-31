@@ -27,6 +27,7 @@ export type Meal = {
 
 export type Profile = {
   id: string;
+  auth_user_id: string;
   name: string | null;
   daily_calories: number;
   current_weight: number | null;

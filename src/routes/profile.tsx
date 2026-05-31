@@ -40,6 +40,7 @@ function ProfilePage() {
   const [calGoal, setCalGoal] = useState<number>(2100);
   const [weight, setWeight] = useState<string>("");
   const [target, setTarget] = useState<string>("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (p) {
@@ -134,9 +135,10 @@ function ProfilePage() {
 
         <button
           onClick={save}
+          disabled={saving}
           className="mt-2 w-full rounded-2xl bg-gradient-to-r from-[#ff6b35] to-[#ff3b6b] py-3 font-semibold shadow-lg shadow-[#ff6b35]/30 transition active:scale-[0.98]"
         >
-          Save changes
+          {saving ? "Saving..." : "Save changes"}
         </button>
       </section>
 
