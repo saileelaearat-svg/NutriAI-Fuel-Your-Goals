@@ -29,6 +29,8 @@ export type Profile = {
   id: string;
   auth_user_id: string;
   name: string | null;
+  full_name: string | null;
+  email: string | null;
   daily_calories: number;
   current_weight: number | null;
   target_weight: number | null;
