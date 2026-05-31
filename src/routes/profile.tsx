@@ -60,11 +60,19 @@ function ProfilePage() {
         navigate({ to: "/auth" });
         return;
       }
+      const uid = auth.user.id;
+      console.log("[profile] saving for user.id:", uid);
+      if (!uid) {
+        toast.error("Missing user id; please sign in again.");
+        return;
+      }
       const { error } = await supabase
         .from("profiles")
         .upsert(
           {
-            auth_user_id: auth.user.id,
+            auth_user_id: uid,
+            full_name: name || null,
+            email: auth.user.email ?? null,
             name: name || null,
             daily_calories: calGoal,
             current_weight: weight ? Number(weight) : null,
@@ -74,10 +82,11 @@ function ProfilePage() {
           { onConflict: "auth_user_id" },
         );
       if (error) {
+        console.error("[profile] supabase upsert error:", error);
         toast.error(error.message ?? "Could not save");
       } else {
         toast.success("Profile saved");
-        qc.invalidateQueries({ queryKey: ["profile", auth.user.id] });
+        qc.invalidateQueries({ queryKey: ["profile", uid] });
       }
     } finally {
       setSaving(false);
@@ -92,7 +101,7 @@ function ProfilePage() {
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#ff6b35] to-[#ff3b6b] text-3xl font-bold shadow-lg shadow-[#ff6b35]/40">
           {(p?.name ?? user?.email ?? "U")[0].toUpperCase()}
         </div>
-        <h2 className="mt-3 text-lg font-bold">{p?.name ?? "Unnamed"}</h2>
+        <h2 className="mt-3 text-lg font-bold">{p?.full_name ?? p?.name ?? "Unnamed"}</h2>
         <p className="text-sm text-white/50">{user?.email}</p>
       </div>
 
