@@ -40,6 +40,7 @@ function ProfilePage() {
   const [calGoal, setCalGoal] = useState<number>(2100);
   const [weight, setWeight] = useState<string>("");
   const [target, setTarget] = useState<string>("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (p) {
